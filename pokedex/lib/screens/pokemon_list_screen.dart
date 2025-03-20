@@ -69,7 +69,7 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
     if (_isLoading) return;
     setState(() {
       _isLoading = true;
-      _pokemonList.clear(); // Limpiar la lista para una nueva carga
+      _pokemonList.clear();
     });
 
     try {
@@ -144,7 +144,7 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
     });
   }
 
-// 🔹 Widget para el selector de orden
+
   Widget _buildSortDropdown() {
     return DropdownButton<String>(
       value: _sortOption,
@@ -152,7 +152,7 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
         if (newValue != null) {
           setState(() {
             _sortOption = newValue;
-            _sortPokemonList(); // Reordenar cuando cambia la selección
+            _sortPokemonList();
           });
         }
       },
@@ -205,12 +205,12 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.shuffle), // Icono de aleatorio
-            onPressed: _showRandomPokemon, // Llama a la función de aleatorio
+            icon: Icon(Icons.shuffle),
+            onPressed: _showRandomPokemon,
           ),
           IconButton(
-            icon: Icon(_isGridView ? Icons.list : Icons.grid_view), // 🔹 Botón para cambiar vista
-            onPressed: _toggleView, // 🔹 Función para alternar vista
+            icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
+            onPressed: _toggleView,
           ),
         ],
       ),
@@ -220,15 +220,15 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             _fetchAllPokemon(query: query);
           }),
           _buildSortDropdown(), // Menú desplegable de orden
-          _buildTypeFilterButtons(), // Filtros de tipo
+          _buildTypeFilterButtons(),
           Expanded(
             child: _isLoading
-                ? Center(child: RotatingPokemonLoader()) // Mostrar Pokéball mientras carga
+                ? Center(child: RotatingPokemonLoader())
                 : _isGridView
                 ? GridView.builder(
               controller: _scrollController,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isWideScreen ? 3 : 2, // Ajusta la cantidad de columnas
+                crossAxisCount: isWideScreen ? 3 : 2,
                 childAspectRatio: isWideScreen ? 1.2 : 1.0,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
