@@ -26,10 +26,11 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
   String _selectedType = 'Todos';
   bool _showFavoritesOnly = false;
   bool _isLoading = false;
+  bool _isGridView = true; // ✅ Estado para cambiar entre lista y cuadrícula
   final ScrollController _scrollController = ScrollController();
   final ScrollController _filterScrollController = ScrollController();
-
   final Map<String, Color> typeColors = {
+
     'electric': Colors.amber,
     'fire': Colors.red,
     'ground': Colors.brown,
@@ -54,6 +55,12 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
     super.initState();
     _fetchAllPokemon();
     _loadFavorites();
+  }
+
+  void _toggleView() {
+    setState(() {
+      _isGridView = !_isGridView;
+    });
   }
 
   String _sortOption = 'Número'; // Opción por defecto de orden
@@ -201,6 +208,10 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             icon: Icon(Icons.shuffle), // Icono de aleatorio
             onPressed: _showRandomPokemon, // Llama a la función de aleatorio
           ),
+          IconButton(
+            icon: Icon(_isGridView ? Icons.list : Icons.grid_view), // 🔹 Botón para cambiar vista
+            onPressed: _toggleView, // 🔹 Función para alternar vista
+          ),
         ],
       ),
       body: Column(
@@ -213,14 +224,42 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
           Expanded(
             child: _isLoading
                 ? Center(child: RotatingPokemonLoader()) // Mostrar Pokéball mientras carga
-                : GridView.builder(
+                : _isGridView
+                ? GridView.builder(
               controller: _scrollController,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isWideScreen ? 2 : 1,
-                childAspectRatio: isWideScreen ? 1 : 2.5,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                crossAxisCount: isWideScreen ? 3 : 2, // Ajusta la cantidad de columnas
+                childAspectRatio: isWideScreen ? 1.2 : 1.0,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
               ),
+              itemCount: _filteredPokemonList.length,
+              itemBuilder: (context, index) {
+                final pokemon = _filteredPokemonList[index];
+                final color = _getColorForTypes(pokemon.types);
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PokemonDetailScreen(pokemon: pokemon),
+                      ),
+                    );
+                  },
+                  child: PokemonCard(
+                    pokemon: pokemon,
+                    isFavorite: _favoritePokemon.contains(pokemon.name),
+                    onFavoriteToggle: () => _toggleFavorite(pokemon),
+                    color: color,
+                    showType: true,
+                    showImage: true,
+                  ),
+                );
+              },
+            )
+                : ListView.builder(
+              controller: _scrollController,
               itemCount: _filteredPokemonList.length,
               itemBuilder: (context, index) {
                 final pokemon = _filteredPokemonList[index];
@@ -251,6 +290,7 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
       ),
     );
   }
+
 
   Color _getColorForTypes(List<String> types) {
     for (var type in types) {

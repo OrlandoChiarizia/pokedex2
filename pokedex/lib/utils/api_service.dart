@@ -4,7 +4,7 @@ import 'package:pokedex/models/pokemon.dart';
 
 class ApiService {
   static Future<List<Pokemon>> fetchAllPokemon() async {
-    final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=1000'));
+    final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=100'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

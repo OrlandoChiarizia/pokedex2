@@ -8,35 +8,33 @@ class PokemonDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Detectamos el ancho de la pantalla
     final screenWidth = MediaQuery.of(context).size.width;
-    // Calculamos el ancho de la tarjeta en función del tamaño de la pantalla
     final cardWidth = screenWidth > 600 ? 500 : screenWidth * 0.8;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pokemon.name.toUpperCase()),
-        backgroundColor: Colors.blue, // Barra superior azul
+        title: Text(
+          pokemon.name.toUpperCase(),
+          style: TextStyle(fontFamily: 'Kanit-Thin'),
+        ),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Imagen del Pokémon
             Center(
               child: Image.network(
                 pokemon.imageUrl,
-                height: 200, // Tamaño de la imagen
+                height: 200,
                 fit: BoxFit.contain,
               ),
             ),
-            SizedBox(height: 4), // Espacio reducido al mínimo
-
-            // Tarjeta con detalles del Pokémon
+            SizedBox(height: 4),
             Expanded(
               child: Center(
-                child: _buildDetailsCard(cardWidth.toDouble()),
+                child: _buildDetailsCard(context, cardWidth.toDouble()),
               ),
             ),
           ],
@@ -45,39 +43,55 @@ class PokemonDetailScreen extends StatelessWidget {
     );
   }
 
-  // Método para construir la tarjeta con efecto hover
-  Widget _buildDetailsCard(double cardWidth) {
+  Widget _buildDetailsCard(BuildContext context, double cardWidth) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.grey[300] : Colors.white; // Fondo gris claro en modo oscuro
+
     return MouseRegion(
       onEnter: (event) {},
       onExit: (event) {},
       child: AnimatedContainer(
         duration: Duration(milliseconds: 1000),
         curve: Curves.easeInOut,
-        transform: Matrix4.identity()..scale(1.05), // Escala ligeramente al pasar el mouse
+        transform: Matrix4.identity()..scale(1.05),
         child: Card(
-          elevation: 8, // Sombreado
+          elevation: 8,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15), // Bordes redondeados
+            borderRadius: BorderRadius.circular(15),
           ),
+          color: backgroundColor, // Aplica el color de fondo dinámico
           child: Container(
-            width: cardWidth, // Ancho dinámico basado en el tamaño de la pantalla
+            width: cardWidth,
             padding: const EdgeInsets.all(30.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start, // Alineación a la izquierda
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "${pokemon.name.toUpperCase()}",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Texto más pequeño
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Kanit-Thin',
+                    color: Colors.black, // Texto oscuro para mayor contraste
+                  ),
                 ),
-                SizedBox(height: 8), // Espaciado interno
-                Text("Tipo(s): ${pokemon.types.join(', ')}", style: TextStyle(fontSize: 14)), // Texto más pequeño
-                Text("Peso: ${pokemon.weight} kg", style: TextStyle(fontSize: 14)), // Texto más pequeño
-                Text("Altura: ${pokemon.height} m", style: TextStyle(fontSize: 14)), // Texto más pequeño
-                SizedBox(height: 8), // Espaciado interno
-                Text("Estadísticas:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // Título de estadísticas
+                SizedBox(height: 8),
+                Text("Tipo(s): ${pokemon.types.join(', ')}", style: _detailTextStyle()),
+                Text("Peso: ${pokemon.weight} kg", style: _detailTextStyle()),
+                Text("Altura: ${pokemon.height} m", style: _detailTextStyle()),
+                SizedBox(height: 8),
+                Text(
+                  "Estadísticas:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Kanit-Thin',
+                    color: Colors.black, // Asegura visibilidad en fondo claro
+                  ),
+                ),
                 ...pokemon.stats.entries.map(
-                      (stat) => Text("${stat.key}: ${stat.value}", style: TextStyle(fontSize: 14)), // Texto más pequeño
+                      (stat) => Text("${stat.key}: ${stat.value}", style: _detailTextStyle()),
                 ),
               ],
             ),
@@ -85,5 +99,9 @@ class PokemonDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  TextStyle _detailTextStyle() {
+    return TextStyle(fontSize: 14, fontFamily: 'Kanit-Thin', color: Colors.black);
   }
 }

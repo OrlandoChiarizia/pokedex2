@@ -27,4 +27,7 @@ flutter:
   assets:
     - assets/images/pokeball.png
   uses-material-design: true
-
+  fonts:
+    - family: Kanit-Thin
+      fonts:
+        - asset: assets/fonts/Kanit-Thin.ttf
